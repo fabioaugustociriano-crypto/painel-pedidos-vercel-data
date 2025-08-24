@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <title>Rastreamento de Pedido</title>
+</head>
+<body>
+  <h1>Consultar Pedido</h1>
+  <form id="form">
+    <input name="codigo" placeholder="Código (nome+cpf4)" required>
+    <button type="submit">Buscar</button>
+  </form>
+  <div id="resp"></div>
+
+  <script>
+    document.getElementById('form').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const codigo = new FormData(e.target).get('codigo');
+      const res = await fetch('/api/buscar-pedido?codigo=' + codigo);
+      const data = await res.json();
+
+      if (data.error) {
+        document.getElementById('resp').innerHTML = "<p style='color:red'>" + data.error + "</p>";
+      } else {
+        document.getElementById('resp').innerHTML = `
+          <p><b>Código:</b> ${data.codigo}</p>
+          <p><b>Cliente:</b> ${data.nome}</p>
+          <p><b>Descrição:</b> ${data.descricao}</p>
+          <p><b>Status:</b> ${data.status}</p>
+          <p><b>Criado em:</b> ${data.criado_em}</p>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

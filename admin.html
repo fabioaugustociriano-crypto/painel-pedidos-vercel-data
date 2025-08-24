@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <title>Admin - Pedidos</title>
+</head>
+<body>
+  <h1>Painel do Dono</h1>
+  <form id="senhaForm">
+    <input type="password" id="senha" placeholder="Senha de acesso">
+    <button type="submit">Entrar</button>
+  </form>
+  <div id="painel" style="display:none;">
+    <h2>Criar Pedido</h2>
+    <form id="pedidoForm">
+      <input name="codigo" placeholder="Código (nome+cpf4)" required>
+      <input name="nome" placeholder="Nome do cliente" required>
+      <textarea name="descricao" placeholder="Descrição"></textarea>
+      <input name="status" placeholder="Status (ex: pendente, enviado)">
+      <button type="submit">Salvar</button>
+    </form>
+    <div id="resp"></div>
+  </div>
+
+  <script>
+    const senhaCorreta = "Batista2025";
+    document.getElementById("senhaForm").addEventListener("submit", e => {
+      e.preventDefault();
+      if (document.getElementById("senha").value === senhaCorreta) {
+        document.getElementById("senhaForm").style.display = "none";
+        document.getElementById("painel").style.display = "block";
+      } else {
+        alert("Senha incorreta!");
+      }
+    });
+
+    document.getElementById("pedidoForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      const res = await fetch("/api/criar-pedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const json = await res.json();
+      document.getElementById("resp").innerText = json.success ? "Pedido salvo!" : (json.error || "Erro");
+    });
+  </script>
+</body>
+</html>
